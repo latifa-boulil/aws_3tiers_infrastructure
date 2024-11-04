@@ -4,11 +4,7 @@
 # variables inherited from output modules
 #########################################
 
-variable "vpc" {
-
-}
-
-variable "public_subnet" {
+variable "vpc_id" {
   
 }
 
