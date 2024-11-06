@@ -18,14 +18,14 @@ variable "trusted_ip" {
     type = string
 }
 
-# variable "database_port" {
-#     description = "value"
-#     type = number
-#     default = 3306  
-# }
+variable "database_port" {
+    description = "value"
+    type = number
+    default = 3306  
+}
 
-# variable "backend_port" {
-#     description = "value"
-#     type = number
-#     default = 3000
-# }
+variable "backend_port" {
+    description = "value"
+    type = number
+    default = 3000
+}
