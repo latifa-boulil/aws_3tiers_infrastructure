@@ -59,9 +59,9 @@ resource "aws_subnet" "public_subnet" {
 # CONNECTIVITY RESSOURCES
 ############################################
 
-# resource "aws_internet_gateway" "internet_gateway" {                          # OK
-#   vpc_id = aws_vpc.my_vpc.id
-# }
+resource "aws_internet_gateway" "internet_gateway" {                          # OK
+  vpc_id = aws_vpc.my_vpc.id
+}
 
 
 # -------- PUBLIC SUBNET CONNECTIVITY ------------

@@ -17,7 +17,7 @@ module "compute" {
   ssh_key = module.security.ssh_key
   web_sg = module.security.web_sg
   # app_sg = module.security.app_sg
-  private_subnet_ids = module.vpc.private_subnet_ids
+  # private_subnet_ids = module.vpc.private_subnet_ids
 }
 
 # module "database" {

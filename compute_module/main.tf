@@ -56,7 +56,7 @@
 # Elastic Load Balancer
 
 resource "aws_elb" "web_elb" {
-  name = "${var.environment}_load_balancer"
+  name = "${var.environment}-loadbalancer"
   internal = false
   security_groups = [var.web_sg]
   subnets = var.public_subnet_ids
@@ -119,7 +119,8 @@ resource "aws_autoscaling_group" "web_tier_asg" {
     version = "$Latest"
   }
 
-  health_check_type          = aws_elb.web_elb.arn # health check in load balancer , Bby default it is EC2
+  health_check_type          = "ELB" # health check in load balancer , Bby default it is EC2
+  load_balancers = [aws_elb.web_elb.name] # refer to load balancer resource created earlier 
   health_check_grace_period  = 300
 
   tag {
@@ -157,6 +158,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_up" {
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
   period = "120"
+  statistic = "Average"
   threshold = "30" # new instance will be created if cpu is higher than 30
   dimensions = {
     "AutoScalingGroupName" = aws_autoscaling_group.web_tier_asg.name
@@ -166,12 +168,13 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_up" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization_down" {
-  alarm_name = "cpu_utilization_down"
+  alarm_name = "cpu-utilization-down"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
   period = "120"
+  statistic = "Average"
   threshold = "27" # instance will go down if cpu is lower than 27 
   dimensions = {
     "AutoScalingGroupName" = aws_autoscaling_group.web_tier_asg.name
@@ -179,3 +182,4 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_down" {
   actions_enabled = true
   alarm_actions = [aws_autoscaling_policy.scale_down.arn]
 }
+
