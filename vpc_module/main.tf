@@ -29,17 +29,17 @@ resource "aws_subnet" "public_subnet" {
     }
 }
 
-resource "aws_subnet" "private_subnet" {
-    for_each = zipmap(var.az, var.private_cidr)
-    vpc_id = aws_vpc.my_vpc.id      
-    availability_zone = each.key
-    cidr_block = each.value 
-    map_public_ip_on_launch = false #no public ip assigned for private subnet         #OK
+# resource "aws_subnet" "private_subnet" {
+#     for_each = zipmap(var.az, var.private_cidr)
+#     vpc_id = aws_vpc.my_vpc.id      
+#     availability_zone = each.key
+#     cidr_block = each.value 
+#     map_public_ip_on_launch = false #no public ip assigned for private subnet         #OK
 
-    tags = {
-        Name = "app_tier_${var.environment}_${each.key}" # back_end 
-    }
-}
+#     tags = {
+#         Name = "app_tier_${var.environment}_${each.key}" # back_end 
+#     }
+# }
 
 # resource "aws_subnet" "database_subnet" {
 #     for_each = zipmap(var.az, var.database_cidr)
