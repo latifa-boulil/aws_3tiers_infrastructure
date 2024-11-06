@@ -138,7 +138,7 @@ resource "aws_autoscaling_policy" "scale_up" {
   scaling_adjustment = 1
   adjustment_type = "ChangeInCapacity"
   cooldown = 300
-  autoscaling_group_name = aws_autoscaling_group.web_tier_asg.arn
+  autoscaling_group_name = aws_autoscaling_group.web_tier_asg.name # attention arn ne marche pas ! name is the way to go 
 }
 
 resource "aws_autoscaling_policy" "scale_down" {
@@ -146,22 +146,22 @@ resource "aws_autoscaling_policy" "scale_down" {
   scaling_adjustment = -1
   adjustment_type = "ChangeInCapacity"
   cooldown = 300
-  autoscaling_group_name = aws_autoscaling_group.web_tier_asg.arn
+  autoscaling_group_name = aws_autoscaling_group.web_tier_asg.name
 }
 
 # CLOUD WATCH METRIC ALARM
 
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization_up" {
-  alarm_name = "cpu_utilization_high"
+  alarm_name = "high-cpu"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods = "2"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
-  period = "120"
+  period = "300"
   statistic = "Average"
   threshold = "30" # new instance will be created if cpu is higher than 30
   dimensions = {
-    "AutoScalingGroupName" = aws_autoscaling_group.web_tier_asg.name
+    AutoScalingGroupName = aws_autoscaling_group.web_tier_asg.name
   }
   actions_enabled = true
   alarm_actions = [aws_autoscaling_policy.scale_up.arn]
