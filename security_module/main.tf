@@ -53,64 +53,64 @@ resource "aws_security_group" "web_sg" {
 
 
 # App Tier (Back End)
-# resource "aws_security_group" "app_sg" {
-#   name = "backend-sg"
-#   description = "Security group for back end app"
-#   vpc_id = var.vpc_id
+resource "aws_security_group" "app_sg" {
+  name = "backend-sg"
+  description = "Security group for back end app"
+  vpc_id = var.vpc_id
 
-#     # Inbound Rules
-#   ingress {
-#     from_port   = var.backend_port
-#     to_port     = var.backend_port
-#     protocol    = "tcp"
-#     security_groups = [aws_security_group.web_sg.id]  # Allow traffic from front end
-#   }
+    # Inbound Rules
+  ingress {
+    from_port   = var.backend_port
+    to_port     = var.backend_port
+    protocol    = "tcp"
+    security_groups = [aws_security_group.web_sg.id]  # Allow traffic from front end
+  }
 
-#   ingress {
-#     from_port = var.database_port  
-#     to_port = var.database_port
-#     protocol = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"] # cycle errorshould be database security group but throwing error cycle to solve by creating separate ressource for rule 
-#     # ans assign it to security group
-#   }
-#     # Outbound Rules
-#   egress {
-#     description = "Allow all traffic out"
-#     from_port = 0
-#     to_port = 0
-#     protocol = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#   tags = {
-#     Name = "app_security_group"
-#   }
-# }
+  ingress {
+    from_port = var.database_port  
+    to_port = var.database_port
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # cycle errorshould be database security group but throwing error cycle to solve by creating separate ressource for rule 
+    # ans assign it to security group
+  }
+    # Outbound Rules
+  egress {
+    description = "Allow all traffic out"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "app_security_group"
+  }
+}
 
-# Database
-# resource "aws_security_group" "database_sg" {
-#   name        = "database-sg"
-#   description = "Security group for the database"
-#   vpc_id      = var.vpc_id
+#Database
+resource "aws_security_group" "database_sg" {
+  name        = "database-sg"
+  description = "Security group for the database"
+  vpc_id      = var.vpc_id
 
-#   # Inbound rules
-#   ingress {
-#     from_port   = var.database_port 
-#     to_port     = var.database_port
-#     protocol    = "tcp"
-#     security_groups = [aws_security_group.app_sg.id]  # Allow traffic from back end
-#   }
+  # Inbound rules
+  ingress {
+    from_port   = var.database_port 
+    to_port     = var.database_port
+    protocol    = "tcp"
+    security_groups = [aws_security_group.app_sg.id]  # Allow traffic from back end
+  }
 
-#   # Outbound rules
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"  # Allow all outbound traffic (or restrict as needed)
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#   tags = {
-#     Name = "database_security_group"
-#   }
-# }
+  # Outbound rules
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"  # Allow all outbound traffic (or restrict as needed)
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "database_security_group"
+  }
+}
 
 ####################################
 # SECURITY GROUP RULES 
