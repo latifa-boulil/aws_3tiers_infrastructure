@@ -18,6 +18,14 @@ output "web_sg" {
     value = module.security.web_sg
 }
 
+output "rds_endpoint" {
+    value =  module.database.rds_endpoint
+}
+
+output "rds_arn" {
+    value = module.database.rds_arn
+  
+}
 # output "app_sg" {
 #     value = module.security.app_sg
 # }

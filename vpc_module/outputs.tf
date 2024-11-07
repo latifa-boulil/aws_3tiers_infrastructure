@@ -11,10 +11,10 @@ output "database_subnet_ids" {
     value = [for subnet in aws_subnet.database_subnet : subnet.id] 
 }
 
-# output "private_subnet_ids" {
-#     value = [ for subnet in aws_subnet.private_subnet : subnet.id]
+output "private_subnet_ids" {
+    value = [ for subnet in aws_subnet.private_subnet : subnet.id]
   
-# }
+}
 
 
 # FILE TESTED AND APPROVED ZERO MISTAKE 

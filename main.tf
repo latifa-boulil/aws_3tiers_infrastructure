@@ -20,7 +20,7 @@ module "compute" {
 module "database" {
   source = "./database_module"
   vpc_id = module.vpc.vpc_id
-  db_password = ""
+  db_password = "adminadmin"
   database_subnets = module.vpc.database_subnet_ids
   database_sg = module.security.database_sg
 

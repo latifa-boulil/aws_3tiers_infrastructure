@@ -165,7 +165,7 @@ resource "aws_elb" "app_loadbalancer" {
 # Launch Template for app- tier EC2
 
 resource "aws_launch_template" "private_launch_template" {
-  name          = "web_launch_template"
+  name          = "app_launch_template"
   image_id      = var.instance_image
   instance_type = var.instance_type
   key_name      = var.ssh_key
