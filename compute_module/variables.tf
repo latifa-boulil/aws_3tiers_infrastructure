@@ -1,9 +1,9 @@
 #########################################
-    # other
+    # MODULE VARIABLES
 #########################################
 
 variable "environment" {
-    description = "Environment type where the infrastructure will be deployed"
+    description = "Environment where infra will be deployed"
     type = string
     default = "production"
 }
@@ -21,19 +21,19 @@ variable "instance_type" {
 }
 
 variable "desired_capacity" {
-    description = "the desired number of EC2"
+    description = "Desired number of EC2 - Auto Scaling Group"
     type = number
     default = 2
 }
 
 variable "min_size" {
-    description = "the desired number of EC2"
+    description = " minimum EC2 running - Auto Scaling Group"
     type = number
     default = 1
 }
 
 variable "max_size" {
-    description = "the desired number of EC2"
+    description = "maximum EC2 running - Auto Scaling Group"
     type = number
     default = 4
 }
@@ -52,33 +52,38 @@ variable "associate_ip" {
 }
 
 #########################################
-# variables inherited from output modules
+# oTHER MODULES VARIABLES
 #########################################
 
 variable "vpc_id"{
-    description = "vpc_id"
+    description = "Workload Vpc Id"
     type = string
 }
 
 variable "public_subnet_ids" {
+    description = "List of Public Subnet Ids"
     type = list(string)
 }
 
 variable "private_subnet_ids" {
+    description = "List of Private Subnet Ids"
     type = list(string)
   
 }
 
 variable "ssh_key" {
+    description = "SSH Public Key of EC2 Connection"
     type = string
 }
 
 variable "web_sg" {
+    description = "List of Security Group Ids - FrontEnd"
     type = string
   
 }
 
 variable "app_sg" {
+    description = "List of Security Group Ids - BackEnd"
     type = string
   
 }

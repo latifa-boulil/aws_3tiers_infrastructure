@@ -2,7 +2,6 @@
 module "vpc" {
   source = "./vpc_module"
   environment = "production"
-  vpc_cidr = "10.0.0.0/16"
   dns_support = "true"
   dns_hostnames = "true"
 }
@@ -20,7 +19,7 @@ module "compute" {
 module "database" {
   source = "./database_module"
   vpc_id = module.vpc.vpc_id
-  db_password = "adminadmin"
+  db_password = var.db_password
   database_subnets = module.vpc.database_subnet_ids
   database_sg = module.security.database_sg
 

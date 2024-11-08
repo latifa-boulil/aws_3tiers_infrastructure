@@ -16,6 +16,7 @@ resource "aws_db_instance" "database" {
     publicly_accessible = var.access 
     storage_type = var.storage_type
     skip_final_snapshot = var.final_snapshot
+    # final_snapshot_identifier = "my_final_snapshoot" ( enable if skip_final_snapshoot = false )
 
     db_subnet_group_name = aws_db_subnet_group.default.name
 

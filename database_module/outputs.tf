@@ -1,10 +1,10 @@
 output "rds_endpoint" {
-    description = "rds endpoint for database connection"
+    description = "RDS Endpoint for Database Connection"
     value = aws_db_instance.database.endpoint
 }
 
 output "rds_arn" {
-    description = "retrieve the arn of our database"
-    value = aws_db_instance.database.arn
-  
+    description = "Retrieve Database ARN"
+    value = aws_db_instance.database.arn 
 }
+
