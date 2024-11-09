@@ -170,8 +170,6 @@ resource "aws_launch_template" "private_launch_template" {
   name          = "app_launch_template"
   image_id      = var.instance_image
   instance_type = var.instance_type
-  key_name      = var.ssh_key
-  user_data = base64encode(file("${path.module}/ec2-init.sh"))
 
   monitoring {
     enabled = var.monitoring

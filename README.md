@@ -67,7 +67,7 @@ The VPC Module is responsible for setting up the foundational networking infrast
     * Public Route Table: Routes traffic from public subnets to the internet via the Internet Gateway.
     * Private Route Tables: Each private and database subnet is associated with its own route table, configured to route outbound traffic through the respective NAT Gateway in the corresponding AZ.
 
-Outputs:
+* **Outputs**:
 The VPC Module outputs the following IDs to be used by other modules:
 - VPC ID: Enables other modules (e.g., compute, database) to attach resources to the same VPC.
 - Subnet IDs: Provides the IDs of public, private, and database subnets for other modules to place their resources in the appropriate network segments.
@@ -79,41 +79,64 @@ The Security Module is designed to enforce strict access controls and ensure the
 * **SSH Public Key Management**
 A public SSH key is securely managed using sensitive variables, ensuring that only authorized personnel can access the system for maintenance or troubleshooting.
 This key is primarily intended for secure access to instances in case of emergencies or manual interventions.
-* **Security Groups**
-The module defines three distinct security groups to segment traffic between tiers:
+* **Security Groups**: The module defines three distinct security groups to segment traffic between tiers
     * Frontend Security Group: Allows inbound traffic on HTTP/HTTPS ports (80, 443) from the internet and permits communication with the backend tier.
     * Backend Security Group: Restricts inbound traffic to only allow requests from the frontend tier on the appropriate application ports (e.g., 8080, 3000). It also allows outbound traffic to the database tier for data queries.
     * Database Security Group: Permits inbound traffic exclusively from the backend tier on the database port (e.g., 3306 for MySQL or 5432 for PostgreSQL). This security group blocks any direct external access to the database.
-* **Security Group Rules**
-Separate Implementation of Rules:
-    Security group rules are implemented as separate resources to avoid Terraform cycle errors. This approach ensures smooth dependency management while maintaining strict control over network traffic.
-* **Tightly Restricted Rules**
-Each rule is carefully crafted to allow only the minimum required access:
-    Frontend Tier: Inbound HTTP/HTTPS from the internet; outbound to backend.
-    Backend Tier: Inbound and Outbound to and from frontend/Database.
-    Database Tier: Inbound and Outbound to and from backend only; no outbound internet access.
+* **Security Group Rules**: Separate Implementation of Rules
+Security group rules are implemented as separate resources to avoid Terraform cycle errors. This approach ensures smooth dependency management while maintaining strict control over network traffic.
+* **Tightly Restricted Rules** : Each rule is carefully crafted to allow only the minimum required access
+    - Frontend Tier: Inbound HTTP/HTTPS from the internet; outbound to backend.
+    - Backend Tier: Inbound and Outbound to and from frontend/Database.
+    - Database Tier: Inbound and Outbound to and from backend only; no outbound internet access.
 
 * **Key Highlights**:
-    Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
-    Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
-    Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
+Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
+Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
+Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
-#### 3. Database Module
+#### 3. Compute Module
 
-* RDS: Relational Database Service for the application’s database tier.
-* DB Subnet Group: Ensures RDS is placed in private subnets.
-* Database Credentials: Stored securely in prod.tfvars.
+The Compute Module handles the deployment of scalable and resilient compute resources, ensuring optimal performance for both the frontend and backend tiers. The module includes the following components:
 
-#### 4. Compute Module
+* **Elastic Load Balancers (ELBs)**
+Two Application Load Balancers (ALBs) are deployed to manage traffic distribution:
+    Frontend Load Balancer: Distributes incoming HTTP/HTTPS traffic to frontend instances.
+    Backend Load Balancer: Balances traffic between backend instances, improving reliability and performance.
 
-* Elastic Load Balancers (ALB):
-    * One for the frontend tier.
-    * One for the backend tier.
-* Launch Templates: Configured for EC2 instances in frontend and backend tiers.
-* Auto Scaling Groups (ASG):
-    Configured for both frontend and backend tiers.
-    Ensures optimal instance count based on load.
-    Auto Scaling Policies: Scale up and down based on CloudWatch Alarms.
+* **Launch Templates**
+Separate Launch Templates are defined for frontend and backend instances to standardize instance configurations (AMI, instance type, key pairs, etc.) and ensure consistent provisioning.
+
+* **Auto Scaling Groups (ASGs)**
+Two ASGs are configured (one for each tier) to manage instance scaling dynamically. They ensure high availability by distributing instances across multiple AZs.
+ASGs are integrated with load balancers to handle traffic routing and health checks automatically.
+
+* **Auto Scaling Policies**
+Policies are defined to scale up or down based on CPU utilization, ensuring efficient use of resources:
+    Scale-Up Policy: Triggers when CPU usage exceeds a predefined threshold.
+    Scale-Down Policy: Triggers when CPU usage falls below a specified threshold.
+
+* **CloudWatch Metric Alarms**
+CloudWatch Alarms monitor the CPU utilization of instances in the ASGs. These alarms trigger the auto scaling policies to ensure the infrastructure adapts to changing workloads:
+    High CPU Alarm: Activates the scale-up policy.
+    Low CPU Alarm: Activates the scale-down policy.
+
+
+#### 4. Database Module
+The Database Module provisions a managed RDS instance and ensures the proper networking setup for secure database access within the infrastructure. The module uses a DB Subnet Group to place the RDS instance within the private subnet for added security. The module includes the following components:
+
+* **RDS Instance** 
+RDS Instance: A fully managed relational database service is provisioned for the backend tier to store application data (e.g., MySQL, PostgreSQL). This instance is placed within the private subnet for security, ensuring it is not directly accessible from the internet.
+* **DB Subnet Group**
+The DB Subnet Group is defined to specify which subnets the RDS instance should be deployed into. The group uses subnets within the private subnet for security, ensuring that the database can only be accessed by other resources within the private network (e.g., backend instances).
+* **Sensitive Variables for Database Credentials**
+DB Username and Password: Both the database username and password are treated as sensitive variables to ensure security. These credentials are securely stored in separate tfvars files and are never hardcoded within the Terraform configuration. This practice ensures that sensitive information remains protected and is securely managed throughout the infrastructure lifecycle.
+
+Key Highlights:
+Security-Focused Deployment: By placing the RDS instance in a private subnet and restricting access through security groups, the module ensures that sensitive data is isolated from the public internet.
+Sensitive Data Management: The use of sensitive variables for the database credentials ensures that sensitive information is kept secure and is not exposed in version control.
+Simplified Database Management: The RDS service automates patching, backups, and scaling, allowing you to focus on application logic instead of database maintenance.
+
 
 #### 5 . Root project 
 
