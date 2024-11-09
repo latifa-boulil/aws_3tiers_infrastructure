@@ -1,11 +1,10 @@
-#                          AWS 3-TIER APPLICATION INFRASTRUCTURE
+# AWS 3-TIER APPLICATION INFRASTRUCTURE
+
 
 ### Introduction
-
 This project showcases the deployment of a highly scalable and resilient 3-tier architecture on AWS, fully automated using Terraform. The infrastructure includes everything from VPC configuration to fine-grained security rules, ensuring optimal performance and security. It is designed to support modern web applications with high availability and efficient resource management, making it ideal for dynamic workloads.
 
 ### Project Overview
-
 This project implements a robust 3-tier architecture designed for scalability, high availability, and security on AWS. The infrastructure consists of the following tiers:
 
 * Frontend Tier (Public Subnet):
@@ -17,8 +16,8 @@ The backend tier operates in a secure private subnet, hosting the core business 
 * Database Tier (Private Subnet):
 The database tier resides in another private subnet, safeguarding sensitive data. Amazon RDS is used with built-in encryption to protect data at rest and in transit. Backups and automated failover capabilities further enhance data reliability.
 
-### Key Features:
 
+### Key Features:
 * High Availability:
 The infrastructure spans multiple availability zones, providing redundancy and minimizing downtime in case of failures.
 
@@ -36,11 +35,7 @@ Terraform state is stored in a remote S3 backend, ensuring a secure and centrali
 
 
 ### PROJECT STRUCTURE
-
-AT THE END INCLUDE THE PROJECT STRUCTURE
-Highly Available: Resources are spread across two availability zones.
-Scalable: Auto Scaling policies ensure resources scale based on demand.
-Secure: Security groups and IAM roles are configured following AWS best practices. 
+ 
 
 #### 1. VPC Module
 
@@ -95,6 +90,7 @@ Terraform (include version)
 Cloud provider CLI (e.g., AWS CLI)
 An active account with the cloud provider
 Access to specific services (e.g., IAM roles, S3 for state management)
+
 ## Usage
 
 Clone the Repository:
