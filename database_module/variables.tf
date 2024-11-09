@@ -12,7 +12,7 @@ variable "db_name" {
 variable "db_username" {
     description = "Database Access : Username"
     type = string
-    default = "admin"
+    sensitive = true    # prod.tfvars
 }
 
 variable "db_password" {

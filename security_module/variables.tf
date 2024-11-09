@@ -17,6 +17,13 @@ variable "trusted_ip" {
     type = string
 }
 
+variable "frontend_port" {
+    description = "front end port"
+    type = number
+    default = 80
+  
+}
+
 variable "database_port" {
     description = "Database Port"
     type = number
@@ -29,3 +36,10 @@ variable "backend_port" {
     default = 3000
 }
 
+
+
+variable "ssh_key" {
+    description = "ssh Public Key"
+    type = string
+    sensitive = true 
+}

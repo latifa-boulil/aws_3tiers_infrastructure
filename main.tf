@@ -20,6 +20,7 @@ module "database" {
   source = "./database_module"
   vpc_id = module.vpc.vpc_id
   db_password = var.db_password
+  db_username = var.db_username
   database_subnets = module.vpc.database_subnet_ids
   database_sg = module.security.database_sg
 
@@ -29,5 +30,6 @@ module "security" {
   source = "./security_module"
   vpc_id = module.vpc.vpc_id
   trusted_ip = "172.18.0.0/16"
+  ssh_key = var.ssh_key
 }
 
