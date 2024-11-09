@@ -36,7 +36,9 @@ Security Groups and IAM roles enforce strict access controls between tiers. Sens
 * State Management:
 Terraform state is stored in a remote S3 backend, ensuring a secure and centralized location for managing the infrastructure state. This facilitates collaboration and provides state locking to prevent conflicts during deployments.
 
-* Cost Optimization
+* Cost Optimization: 
+The project is designed with cost efficiency in mind. Auto Scaling ensures that compute resources are only provisioned when necessary, scaling up during high traffic and scaling down during periods of low demand, minimizing costs. Additionally, most resources, such as the S3 backend, RDS, and EC2 instances, are configured to operate within the AWS Free Tier where possible, reducing operational expenses during the initial phases of development and testing.
+
 
     -- place diagram here --
 
@@ -52,27 +54,49 @@ The project is organized into the following Terraform modules:
 
 The VPC Module is responsible for setting up the foundational networking infrastructure. It dynamically provisions resources based on the number of availability zones (AZs) specified in variables.tf, ensuring flexibility and scalability. The module includes the following components:
 
-* VPC: Creates a Virtual Private Cloud to provide an isolated network environment for the application.
-* Subnets: Dynamically provisions three types of subnets across all specified AZs using a for_each loop:
+* **VPC** : Creates a Virtual Private Cloud to provide an isolated network environment for the application.
+* **Subnets**: Dynamically provisions three types of subnets across all specified AZs using a for_each loop:
 
     * Public Subnets: For resources that require internet access (e.g., NAT Gateways, Load Balancers).
     * Private Subnets: For backend services that do not require direct internet access.
     * Database Subnets: Specifically designed for hosting RDS instances with no internet connectivity for added security.
-* Internet Gateway (IGW): Allows resources in the public subnets to communicate with the internet.
-* Elastic IP Addresses (EIPs): Allocates one Elastic IP for each AZ to ensure consistent internet-facing addresses for the NAT Gateways.
-* NAT Gateways: Deploys one NAT Gateway per AZ in the public subnets. This allows instances in private and database subnets to initiate outbound internet connections securely (e.g., for updates).
-* Route Tables and Associations: 
+* **Internet Gateway (IGW)**: Allows resources in the public subnets to communicate with the internet.
+* **Elastic IP Addresses (EIPs)**: Allocates one Elastic IP for each AZ to ensure consistent internet-facing addresses for the NAT Gateways.
+* **NAT Gateways**: Deploys one NAT Gateway per AZ in the public subnets. This allows instances in private and database subnets to initiate outbound internet connections securely (e.g., for updates).
+* **Route Tables and Associations**: 
     * Public Route Table: Routes traffic from public subnets to the internet via the Internet Gateway.
     * Private Route Tables: Each private and database subnet is associated with its own route table, configured to route outbound traffic through the respective NAT Gateway in the corresponding AZ.
 
+Outputs:
+The VPC Module outputs the following IDs to be used by other modules:
+- VPC ID: Enables other modules (e.g., compute, database) to attach resources to the same VPC.
+- Subnet IDs: Provides the IDs of public, private, and database subnets for other modules to place their resources in the appropriate network segments.
 
 #### 2. Security Module
 
-* Security Groups:
-    * Frontend tier security group for public access.
-    * Backend tier security group for restricted access from frontend.
-    * Database tier security group for restricted access from backend.
-* SSH Key: Public key associated with launch templates.
+The Security Module is designed to enforce strict access controls and ensure the overall security of the infrastructure. It adheres to the principle of least privilege, providing only the necessary access for each tier of the architecture. The module includes the following components:
+
+* **SSH Public Key Management**
+A public SSH key is securely managed using sensitive variables, ensuring that only authorized personnel can access the system for maintenance or troubleshooting.
+This key is primarily intended for secure access to instances in case of emergencies or manual interventions.
+* **Security Groups**
+The module defines three distinct security groups to segment traffic between tiers:
+    * Frontend Security Group: Allows inbound traffic on HTTP/HTTPS ports (80, 443) from the internet and permits communication with the backend tier.
+    * Backend Security Group: Restricts inbound traffic to only allow requests from the frontend tier on the appropriate application ports (e.g., 8080, 3000). It also allows outbound traffic to the database tier for data queries.
+    * Database Security Group: Permits inbound traffic exclusively from the backend tier on the database port (e.g., 3306 for MySQL or 5432 for PostgreSQL). This security group blocks any direct external access to the database.
+* **Security Group Rules**
+Separate Implementation of Rules:
+    Security group rules are implemented as separate resources to avoid Terraform cycle errors. This approach ensures smooth dependency management while maintaining strict control over network traffic.
+* **Tightly Restricted Rules**
+Each rule is carefully crafted to allow only the minimum required access:
+    Frontend Tier: Inbound HTTP/HTTPS from the internet; outbound to backend.
+    Backend Tier: Inbound and Outbound to and from frontend/Database.
+    Database Tier: Inbound and Outbound to and from backend only; no outbound internet access.
+
+* **Key Highlights**:
+    Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
+    Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
+    Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
 #### 3. Database Module
 
