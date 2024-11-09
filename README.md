@@ -2,9 +2,13 @@
 
 
 ### Introduction
+------------------
+
 This project showcases the deployment of a highly scalable and resilient 3-tier architecture on AWS, fully automated using Terraform. The infrastructure includes everything from VPC configuration to fine-grained security rules, ensuring optimal performance and security. It is designed to support modern web applications with high availability and efficient resource management, making it ideal for dynamic workloads.
 
 ### Project Overview
+---------------------
+
 This project implements a robust 3-tier architecture designed for scalability, high availability, and security on AWS. The infrastructure consists of the following tiers:
 
 * Frontend Tier (Public Subnet):
@@ -18,6 +22,8 @@ The database tier resides in another private subnet, safeguarding sensitive data
 
 
 ### Key Features:
+------------------
+
 * High Availability:
 The infrastructure spans multiple availability zones, providing redundancy and minimizing downtime in case of failures.
 
@@ -30,23 +36,35 @@ Security Groups and IAM roles enforce strict access controls between tiers. Sens
 * State Management:
 Terraform state is stored in a remote S3 backend, ensuring a secure and centralized location for managing the infrastructure state. This facilitates collaboration and provides state locking to prevent conflicts during deployments.
 
+* Cost Optimization
 
     -- place diagram here --
 
 
-### PROJECT STRUCTURE
- 
+### Project Structure
+--------------------------
 
+The project leverages an extensive modular structure to ensure scalability, reusability, and maintainability. Each module is designed to manage a specific part of the infrastructure, allowing for clear separation of concerns and simplified updates.
+
+The project is organized into the following Terraform modules:
+ 
 #### 1. VPC Module
 
-* VPC: Custom VPC to host the entire infrastructure.
-* Subnets:
-    * Public subnets for frontend tier.
-    * Private subnets for backend and database tiers.
-    Subnets are dynamically deployed using for_each across two AZs.
-* Internet Gateway: Allows public access to frontend resources.
-* NAT Gateway: Placed in public subnets to enable outbound internet access for private resources.
-* Route Tables: Configured for each tier with appropriate route table associations.
+The VPC Module is responsible for setting up the foundational networking infrastructure. It dynamically provisions resources based on the number of availability zones (AZs) specified in variables.tf, ensuring flexibility and scalability. The module includes the following components:
+
+* VPC: Creates a Virtual Private Cloud to provide an isolated network environment for the application.
+* Subnets: Dynamically provisions three types of subnets across all specified AZs using a for_each loop:
+
+    * Public Subnets: For resources that require internet access (e.g., NAT Gateways, Load Balancers).
+    * Private Subnets: For backend services that do not require direct internet access.
+    * Database Subnets: Specifically designed for hosting RDS instances with no internet connectivity for added security.
+* Internet Gateway (IGW): Allows resources in the public subnets to communicate with the internet.
+* Elastic IP Addresses (EIPs): Allocates one Elastic IP for each AZ to ensure consistent internet-facing addresses for the NAT Gateways.
+* NAT Gateways: Deploys one NAT Gateway per AZ in the public subnets. This allows instances in private and database subnets to initiate outbound internet connections securely (e.g., for updates).
+* Route Tables and Associations: 
+    * Public Route Table: Routes traffic from public subnets to the internet via the Internet Gateway.
+    * Private Route Tables: Each private and database subnet is associated with its own route table, configured to route outbound traffic through the respective NAT Gateway in the corresponding AZ.
+
 
 #### 2. Security Module
 
