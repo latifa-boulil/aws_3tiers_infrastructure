@@ -71,6 +71,7 @@ The VPC Module outputs the following IDs to be used by other modules:
 - VPC ID: Enables other modules (e.g., compute, database) to attach resources to the same VPC.
 - Subnet IDs: Provides the IDs of public, private, and database subnets for other modules to place their resources in the appropriate network segments.
 
+![vpc-dashboard](assets/vpc%20dashbord.png)
 ##### 2. Security Module
 
 The Security Module is designed to enforce strict access controls and ensure the overall security of the infrastructure. It adheres to the principle of least privilege, providing only the necessary access for each tier of the architecture. The module includes the following components:
@@ -93,6 +94,8 @@ Security group rules are implemented as separate resources to avoid Terraform cy
 - Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
 - Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
 - Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
+
+![sg-group](assets/security-group.png)
 
 ##### 3. Compute Module
 
@@ -120,7 +123,8 @@ CloudWatch Alarms monitor the CPU utilization of instances in the ASGs. These al
     High CPU Alarm: Activates the scale-up policy.
     Low CPU Alarm: Activates the scale-down policy.
 
-
+![ec2-dashboard](assets/ec2-dashboard.png)
+![autoscaling-grp](assets/auto%20scaling%20group.png)
 ##### 4. Database Module
 The Database Module provisions a managed RDS instance and ensures the proper networking setup for secure database access within the infrastructure. The module uses a DB Subnet Group to place the RDS instance within the private subnet for added security. The module includes the following components:
 
@@ -135,6 +139,8 @@ Key Highlights:
 - Security-Focused Deployment: By placing the RDS instance in a private subnet and restricting access through security groups, the module ensures that sensitive data is isolated from the public internet.
 - Sensitive Data Management: The use of sensitive variables for the database credentials ensures that sensitive information is kept secure and is not exposed in version control.
 - Simplified Database Management: The RDS service automates patching, backups, and scaling, allowing you to focus on application logic instead of database maintenance.
+
+![database](assets/database-1.png)
 
 ##### 5. Root Directory Structure
 ------------------------
@@ -192,30 +198,29 @@ List necessary tools and accounts:
 ## Usage
 -------------------
 
-Clone the Repository:
+[Clone the Repository]:
 ```
 git clone <repository-url>
 cd <repository-folder>
 ```
 
-Initialize Terraform:
+[Initialize Terraform]:
 
 `terraform init`
 
-Plan the Infrastructure:
+[Plan the Infrastructure]:
 
 `terraform plan -var-file=prod.tfvars`
 
-Apply the Changes:
+[Apply the Changes]:
 
 `terraform apply -var-file=prod.tfvars`
 
 ![terraform-apply](/assets/tf-apply.png)
 
-Destroy the Infrastructure (if needed):
+[Destroy the Infrastructure (if needed)]:
 
 `terraform destroy -var-file=prod.tfvars`
-
 
 ## BEST PRACTICES 
 -----------------------
@@ -232,15 +237,15 @@ Solution: Check for circular dependencies in your module configurations.
 ## Monitoring and Logging
 ------------------------------
 
-CloudWatch Alarms: Monitors CPU utilization to trigger auto-scaling policies.
-CloudWatch Logs: Collects logs for debugging and performance analysis.
+- CloudWatch Alarms: Monitors CPU utilization to trigger auto-scaling policies.
+- CloudWatch Logs: Collects logs for debugging and performance analysis.
 
 ## Future Improvements
 -----------------------------
-Implement Terraform Cloud for collaboration.
-Add WAF for enhanced security on ALBs.
-Integrate Prometheus and Grafana for advanced monitoring.
-implement IAM ROLES 
+- [] Adopt Terraform Cloud to enhance collaboration, streamline state management, and enable features like policy enforcement and change notifications.
+- [] Integrate AWS WAF with the Application Load Balancers (ALBs) to provide advanced security by protecting against common web exploits and attacks.
+- [] Incorporate Prometheus and Grafana for comprehensive monitoring and visualization, enabling proactive performance management and incident response.
+- [] Enhance IAM Role Implementation by applying the principle of least privilege more effectively, ensuring that resources only have access to the permissions necessary for their specific tasks.
 
 ## License
 ------------------------
