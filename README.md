@@ -157,24 +157,37 @@ This is the main entry point where all the individual modules are referenced and
 The prod.tfvars file stores sensitive information, such as database credentials and any other secrets. This file is not checked into version control to ensure security.
 
 ```
-    ├── provider.tf
-    ├── main.tf
-    ├── variables.tf
-    ├── prod.tfvars
-    ├── modules
-    │   ├── vpc
-    │   ├── security
-    │   ├── compute
-    │   ├── database
+├── compute_module
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── output.tf
+├── vpc_module
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── output.tf
+├── database_module
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── output.tf
+├── security_module
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── output.tf
+├── main.tf              # Root main.tf referencing all modules
+├── provider.tf          # Provider configuration (AWS)
+├── variables.tf         # Global variables used across modules
+├── prod.tfvars          # Sensitive variable values (password,credentials)
+
 ```
 ## Prerequisites
 ----------------------
 
 List necessary tools and accounts:
-Terraform (include version)
-Cloud provider CLI (e.g., AWS CLI)
-An active account with the cloud provider
-Access to specific services (e.g., IAM roles, S3 for state management)
+
+- Terraform (include version)
+- Cloud provider CLI (e.g., AWS CLI)
+- An active account with the cloud provider
+- Access to specific services (e.g., IAM roles, S3 for state management)
 
 ## Usage
 -------------------
@@ -197,6 +210,8 @@ Apply the Changes:
 
 `terraform apply -var-file=prod.tfvars`
 
+![terraform-apply](/assets/tf-apply.png)
+
 Destroy the Infrastructure (if needed):
 
 `terraform destroy -var-file=prod.tfvars`
@@ -205,14 +220,7 @@ Destroy the Infrastructure (if needed):
 ## BEST PRACTICES 
 -----------------------
 
-Include any relevant practices:
-
-Use remote state for collaboration.
-Manage secrets securely (e.g., AWS Secrets Manager)
-
-All sensitive credentials are stored in encrypted files (prod.tfvars).
-Least privilege principles applied for IAM roles.
-Network segmentation via security groups and subnets.
+This project adheres to key best practices to ensure security, scalability, and efficient collaboration. Remote state storage is used to facilitate team collaboration and maintain a single source of truth. Sensitive credentials are securely managed using encrypted files (e.g., prod.tfvars) and AWS Secrets Manager to protect critical information. The principle of least privilege is strictly applied to security groups rules. Additionally, the infrastructure employs network segmentation through security groups and subnets, enhancing security by isolating different tiers and restricting unnecessary access.
 
 ## Troubleshooting
 ----------------------------
@@ -232,6 +240,7 @@ CloudWatch Logs: Collects logs for debugging and performance analysis.
 Implement Terraform Cloud for collaboration.
 Add WAF for enhanced security on ALBs.
 Integrate Prometheus and Grafana for advanced monitoring.
+implement IAM ROLES 
 
 ## License
 ------------------------
