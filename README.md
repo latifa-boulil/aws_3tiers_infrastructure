@@ -94,9 +94,6 @@ Security group rules are implemented as separate resources to avoid Terraform cy
 - Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
 - Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
-![security groups](assets/security-groups.png)
-![sg rules](assets/sg-rules.png)
-
 ##### 3. Compute Module
 
 The Compute Module handles the deployment of scalable and resilient compute resources, ensuring optimal performance for both the frontend and backend tiers. The module includes the following components:
@@ -159,7 +156,7 @@ This is the main entry point where all the individual modules are referenced and
 * **prod.tfvars (Sensitive Variables)**
 The prod.tfvars file stores sensitive information, such as database credentials and any other secrets. This file is not checked into version control to ensure security.
 
-'''
+```
     ├── provider.tf
     ├── main.tf
     ├── variables.tf
@@ -169,8 +166,7 @@ The prod.tfvars file stores sensitive information, such as database credentials 
     │   ├── security
     │   ├── compute
     │   ├── database
-'''
-
+```
 ## Prerequisites
 ----------------------
 
@@ -184,33 +180,27 @@ Access to specific services (e.g., IAM roles, S3 for state management)
 -------------------
 
 Clone the Repository:
+```
 git clone <repository-url>
 cd <repository-folder>
+```
+
 Initialize Terraform:
 
-bash
-Copier le code
-terraform init
+`terraform init`
+
 Plan the Infrastructure:
 
-bash
-Copier le code
-terraform plan -var-file=prod.tfvars
+`terraform plan -var-file=prod.tfvars`
+
 Apply the Changes:
 
-bash
-Copier le code
-terraform apply -var-file=prod.tfvars
+`terraform apply -var-file=prod.tfvars`
+
 Destroy the Infrastructure (if needed):
 
-bash
-Copier le code
-terraform destroy -var-file=prod.tfvars
+`terraform destroy -var-file=prod.tfvars`
 
-Outputs
-Public IPs and DNS of ALBs.
-RDS Endpoint for the database.
-Auto Scaling Group details.
 
 ## BEST PRACTICES 
 -----------------------
