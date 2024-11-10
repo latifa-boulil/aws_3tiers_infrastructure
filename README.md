@@ -94,7 +94,8 @@ Security group rules are implemented as separate resources to avoid Terraform cy
 - Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
 - Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
-![security groups](assets/security%20groups.png)
+<img src="assets/security-groups.png" width="600">
+
 ##### 3. Compute Module
 
 The Compute Module handles the deployment of scalable and resilient compute resources, ensuring optimal performance for both the frontend and backend tiers. The module includes the following components:
