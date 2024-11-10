@@ -94,7 +94,8 @@ Security group rules are implemented as separate resources to avoid Terraform cy
 - Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
 - Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
-<img src="assets/security-groups.png" width="600">
+![security groups](assets/security-groups.png)
+![sg rules](assets/sg-rules.png)
 
 ##### 3. Compute Module
 
