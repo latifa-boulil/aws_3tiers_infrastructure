@@ -71,7 +71,8 @@ The VPC Module outputs the following IDs to be used by other modules:
 - VPC ID: Enables other modules (e.g., compute, database) to attach resources to the same VPC.
 - Subnet IDs: Provides the IDs of public, private, and database subnets for other modules to place their resources in the appropriate network segments.
 
-![vpc-dashboard](assets/vpc%20dashbord.png)
+![private-subnet](assets/private-subnet1.png)
+![dashboard-private](assets/subnets.png)
 ##### 2. Security Module
 
 The Security Module is designed to enforce strict access controls and ensure the overall security of the infrastructure. It adheres to the principle of least privilege, providing only the necessary access for each tier of the architecture. The module includes the following components:
@@ -123,7 +124,7 @@ CloudWatch Alarms monitor the CPU utilization of instances in the ASGs. These al
     High CPU Alarm: Activates the scale-up policy.
     Low CPU Alarm: Activates the scale-down policy.
 
-![ec2-dashboard](assets/ec2-dashboard.png)
+![autoscaling-code](assets/autoscaling-grp.png)    
 ![autoscaling-grp](assets/auto%20scaling%20group.png)
 ##### 4. Database Module
 The Database Module provisions a managed RDS instance and ensures the proper networking setup for secure database access within the infrastructure. The module uses a DB Subnet Group to place the RDS instance within the private subnet for added security. The module includes the following components:
