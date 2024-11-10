@@ -50,13 +50,12 @@ The project leverages an extensive modular structure to ensure scalability, reus
 
 The project is organized into the following Terraform modules:
  
-#### 1. VPC Module
+##### 1. VPC Module
 
 The VPC Module is responsible for setting up the foundational networking infrastructure. It dynamically provisions resources based on the number of availability zones (AZs) specified in variables.tf, ensuring flexibility and scalability. The module includes the following components:
 
 * **VPC** : Creates a Virtual Private Cloud to provide an isolated network environment for the application.
 * **Subnets**: Dynamically provisions three types of subnets across all specified AZs using a for_each loop:
-
     * Public Subnets: For resources that require internet access (e.g., NAT Gateways, Load Balancers).
     * Private Subnets: For backend services that do not require direct internet access.
     * Database Subnets: Specifically designed for hosting RDS instances with no internet connectivity for added security.
@@ -72,7 +71,7 @@ The VPC Module outputs the following IDs to be used by other modules:
 - VPC ID: Enables other modules (e.g., compute, database) to attach resources to the same VPC.
 - Subnet IDs: Provides the IDs of public, private, and database subnets for other modules to place their resources in the appropriate network segments.
 
-#### 2. Security Module
+##### 2. Security Module
 
 The Security Module is designed to enforce strict access controls and ensure the overall security of the infrastructure. It adheres to the principle of least privilege, providing only the necessary access for each tier of the architecture. The module includes the following components:
 
@@ -91,11 +90,12 @@ Security group rules are implemented as separate resources to avoid Terraform cy
     - Database Tier: Inbound and Outbound to and from backend only; no outbound internet access.
 
 * **Key Highlights**:
-Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
-Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
-Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
+- Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
+- Cycle-Free Implementation: By decoupling security group rules from the security group definitions, the module avoids Terraform dependency cycles.
+- Sensitive Data Protection: SSH public keys are managed securely, preventing accidental exposure.
 
-#### 3. Compute Module
+![security groups](assets/security%20groups.png)
+##### 3. Compute Module
 
 The Compute Module handles the deployment of scalable and resilient compute resources, ensuring optimal performance for both the frontend and backend tiers. The module includes the following components:
 
@@ -122,7 +122,7 @@ CloudWatch Alarms monitor the CPU utilization of instances in the ASGs. These al
     Low CPU Alarm: Activates the scale-down policy.
 
 
-#### 4. Database Module
+##### 4. Database Module
 The Database Module provisions a managed RDS instance and ensures the proper networking setup for secure database access within the infrastructure. The module uses a DB Subnet Group to place the RDS instance within the private subnet for added security. The module includes the following components:
 
 * **RDS Instance** 
@@ -133,22 +133,44 @@ The DB Subnet Group is defined to specify which subnets the RDS instance should 
 DB Username and Password: Both the database username and password are treated as sensitive variables to ensure security. These credentials are securely stored in separate tfvars files and are never hardcoded within the Terraform configuration. This practice ensures that sensitive information remains protected and is securely managed throughout the infrastructure lifecycle.
 
 Key Highlights:
-Security-Focused Deployment: By placing the RDS instance in a private subnet and restricting access through security groups, the module ensures that sensitive data is isolated from the public internet.
-Sensitive Data Management: The use of sensitive variables for the database credentials ensures that sensitive information is kept secure and is not exposed in version control.
-Simplified Database Management: The RDS service automates patching, backups, and scaling, allowing you to focus on application logic instead of database maintenance.
+- Security-Focused Deployment: By placing the RDS instance in a private subnet and restricting access through security groups, the module ensures that sensitive data is isolated from the public internet.
+- Sensitive Data Management: The use of sensitive variables for the database credentials ensures that sensitive information is kept secure and is not exposed in version control.
+- Simplified Database Management: The RDS service automates patching, backups, and scaling, allowing you to focus on application logic instead of database maintenance.
 
+##### 5. Root Directory Structure
+------------------------
 
-#### 5 . Root project 
+The root directory of the Terraform project organizes the main configuration, sensitive variables, and references to all the modules used in the infrastructure. The structure ensures modularity, reusability, and security, while maintaining clarity. The main components are as follows:
 
-* Provider Configuration
-    AWS Provider: Version 5.0
-    Region: eu-west-3
-    Availability Zones: eu-west-3a, eu-west-3b
-* State Management
-* Backend: Terraform state is stored in an S3 bucket to manage infrastructure changes securely and consistently.
+* **provider.tf**
+This file configures the provider for AWS (or other cloud providers if needed), defining the credentials, region, and other necessary settings required to interact with AWS resources.
 
+* **Provider Configuration**
+Defines the AWS provider and configures the region and any other provider-specific settings.
+
+* **Backend Configuration (for S3 tfstate)**
+The backend configuration is set up to store the Terraform state in an S3 bucket, ensuring that the state is shared and managed securely in a remote location. It also supports state locking via DynamoDB to prevent race conditions during concurrent Terraform runs.
+
+* **main.tf**
+This is the main entry point where all the individual modules are referenced and instantiated. It pulls in all the previously defined modules and configures them to create the full infrastructure stack.
+
+* **prod.tfvars (Sensitive Variables)**
+The prod.tfvars file stores sensitive information, such as database credentials and any other secrets. This file is not checked into version control to ensure security.
+
+'''
+    ├── provider.tf
+    ├── main.tf
+    ├── variables.tf
+    ├── prod.tfvars
+    ├── modules
+    │   ├── vpc
+    │   ├── security
+    │   ├── compute
+    │   ├── database
+'''
 
 ## Prerequisites
+----------------------
 
 List necessary tools and accounts:
 Terraform (include version)
@@ -157,6 +179,7 @@ An active account with the cloud provider
 Access to specific services (e.g., IAM roles, S3 for state management)
 
 ## Usage
+-------------------
 
 Clone the Repository:
 git clone <repository-url>
@@ -188,6 +211,7 @@ RDS Endpoint for the database.
 Auto Scaling Group details.
 
 ## BEST PRACTICES 
+-----------------------
 
 Include any relevant practices:
 
@@ -199,21 +223,25 @@ Least privilege principles applied for IAM roles.
 Network segmentation via security groups and subnets.
 
 ## Troubleshooting
+----------------------------
 Provide solutions to common issues:
 
 Error: Error: Cycle detected in module dependencies
 Solution: Check for circular dependencies in your module configurations.
 
 ## Monitoring and Logging
+------------------------------
 
 CloudWatch Alarms: Monitors CPU utilization to trigger auto-scaling policies.
 CloudWatch Logs: Collects logs for debugging and performance analysis.
 
 ## Future Improvements
+-----------------------------
 Implement Terraform Cloud for collaboration.
 Add WAF for enhanced security on ALBs.
 Integrate Prometheus and Grafana for advanced monitoring.
 
 ## License
+------------------------
 This project is open-source and available under the MIT License.
 
