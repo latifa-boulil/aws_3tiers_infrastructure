@@ -141,8 +141,6 @@ Key Highlights:
 - Sensitive Data Management: The use of sensitive variables for the database credentials ensures that sensitive information is kept secure and is not exposed in version control.
 - Simplified Database Management: The RDS service automates patching, backups, and scaling, allowing you to focus on application logic instead of database maintenance.
 
-![database](assets/database-1.png)
-
 ##### 5. Root Directory Structure
 ------------------------
 
