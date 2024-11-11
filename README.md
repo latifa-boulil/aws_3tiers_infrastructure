@@ -39,8 +39,7 @@ Terraform state is stored in a remote S3 backend, ensuring a secure and centrali
 * Cost Optimization: 
 The project is designed with cost efficiency in mind. Auto Scaling ensures that compute resources are only provisioned when necessary, scaling up during high traffic and scaling down during periods of low demand, minimizing costs. Additionally, most resources, such as the S3 backend, RDS, and EC2 instances, are configured to operate within the AWS Free Tier where possible, reducing operational expenses during the initial phases of development and testing.
 
-
-    -- place diagram here --
+![diagram](assets/diagram.png)
 
 
 ### Project Structure
@@ -228,10 +227,25 @@ This project adheres to key best practices to ensure security, scalability, and 
 
 ## Troubleshooting
 ----------------------------
-Provide solutions to common issues:
+Issue: Cycle Detected in Security Groups
+When applying the Terraform configuration, the following error appeared:
 
-Error: Error: Cycle detected in module dependencies
-Solution: Check for circular dependencies in your module configurations.
+![error](assets/cycle-error.png)
+
+Cause:
+This error arises when two security groups reference each other in their ingress rules, creating a circular dependency. Terraform cannot determine which security group should be created first, resulting in a cycle error.
+
+Solution:
+To resolve this, it’s essential to separate the creation of security groups from the assignment of their rules.
+
+First, create the security groups without any rules that introduce dependencies.
+Next, define the security group rules separately, referencing the already created security groups.
+By doing this, Terraform can create the security groups independently, and then apply the dependent rules afterward, avoiding the cycle error.
+
+This approach ensures that all security groups are created before any interdependent rules are applied, breaking the circular dependency and allowing the configuration to be applied successfully.
+
+![security-grp](assets/back-sg.png)
+![backend-rules](assets/backend-rules.png)
 
 ## Monitoring and Logging
 ------------------------------
