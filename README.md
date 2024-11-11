@@ -241,10 +241,10 @@ Solution: Check for circular dependencies in your module configurations.
 
 ## Future Improvements
 -----------------------------
-- [] Adopt Terraform Cloud to enhance collaboration, streamline state management, and enable features like policy enforcement and change notifications.
-- [] Integrate AWS WAF with the Application Load Balancers (ALBs) to provide advanced security by protecting against common web exploits and attacks.
-- [] Incorporate Prometheus and Grafana for comprehensive monitoring and visualization, enabling proactive performance management and incident response.
-- [] Enhance IAM Role Implementation by applying the principle of least privilege more effectively, ensuring that resources only have access to the permissions necessary for their specific tasks.
+- [ ] Adopt Terraform Cloud to enhance collaboration, streamline state management, and enable features like policy enforcement and change notifications.
+- [ ] Integrate AWS WAF with the Application Load Balancers (ALBs) to provide advanced security by protecting against common web exploits and attacks.
+- [ ] Incorporate Prometheus and Grafana for comprehensive monitoring and visualization, enabling proactive performance management and incident response.
+- [ ] Enhance IAM Role Implementation by applying the principle of least privilege more effectively, ensuring that resources only have access to the permissions necessary for their specific tasks.
 
 ## License
 ------------------------
