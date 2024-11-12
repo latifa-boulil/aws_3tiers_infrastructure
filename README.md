@@ -198,7 +198,7 @@ List necessary tools and accounts:
 
 [Clone the Repository]:
 ```
-git clone git@github.com:latifab7/aws_3tiers_infrastructure.git
+git clone https://github.com/latifab7/aws_3tiers_infrastructure.git
 
 ```
 
