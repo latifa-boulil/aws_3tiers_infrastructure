@@ -198,8 +198,8 @@ List necessary tools and accounts:
 
 [Clone the Repository]:
 ```
-git clone <repository-url>
-cd <repository-folder>
+git clone git@github.com:latifab7/aws_3tiers_infrastructure.git
+
 ```
 
 [Initialize Terraform]:
