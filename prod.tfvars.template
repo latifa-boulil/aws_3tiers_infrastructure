@@ -3,3 +3,6 @@ db_password = "your secure database password here"
 db_password = "your secure database username here"
 
 ssh_key = "your secure ssh public key here"
+
+acm_certificate = "your secure acm certificate arn"
+

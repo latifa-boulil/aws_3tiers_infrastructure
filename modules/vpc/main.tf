@@ -12,7 +12,6 @@ resource "aws_vpc" "my_vpc" {
   }
 }
 
-
 #####################################
 # SUBNETS
 #####################################
@@ -53,8 +52,6 @@ resource "aws_subnet" "database_subnet" {
     }
 }
 
-
-
 ############################################
 # CONNECTIVITY RESSOURCES
 ############################################
@@ -63,28 +60,9 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.my_vpc.id
 }
 
-
 # -------- PUBLIC SUBNET CONNECTIVITY ------------
 
-resource "aws_eip" "nat_ip" {                                                  
-  for_each = toset(var.az)                        
-}
-
-
-resource "aws_nat_gateway" "nat_gateway" {
-  for_each            = aws_subnet.public_subnet
-  allocation_id       = aws_eip.nat_ip[each.key].id                               
-  subnet_id           = each.value.id
-  connectivity_type   = "public"
-
-  tags = {
-    Name = "nat_gateway_${each.key}"
-  }
-  depends_on = [aws_eip.nat_ip]  # cannot create nat_gateway without elastic IP adress (error throw)
-}
-
-
-# Route Table for Public Subnet (Front End) with NAT Gateway
+# Route Table for Public Subnet (Front End) 
 resource "aws_route_table" "public_rt" {
   for_each = aws_subnet.public_subnet
   vpc_id = aws_vpc.my_vpc.id                                                     
@@ -103,18 +81,12 @@ resource "aws_route_table_association" "publicRTlink" {
   route_table_id = aws_route_table.public_rt[each.key].id
 }
 
-
 # ------PRIVATE SUBNET CONNECTIVITY ( APP TIERS )--------
-
 
 resource "aws_route_table" "backend_rt" {
   for_each          = aws_subnet.private_subnet
-  vpc_id            =  aws_vpc.my_vpc.id                                         
-  route {
-    cidr_block      = "0.0.0.0/0" 
-    gateway_id      = aws_internet_gateway.internet_gateway.id
-  }
-
+  vpc_id            =  aws_vpc.my_vpc.id   
+  # No outbound internet route, only internal routes if needed                                       
   tags = {
     Name = "private-route-table"
   }
@@ -126,15 +98,12 @@ resource "aws_route_table_association" "private_subnet_association_backend" {
   route_table_id = aws_route_table.backend_rt[each.key].id
 }
 
-
 # ------- PRIVATE SUBNET CONNECTIVITY ( DATABASE TIERS) -------
 
 resource "aws_route_table" "database_rt" {
   for_each = aws_subnet.database_subnet
   vpc_id = aws_vpc.my_vpc.id
-
   # No outbound internet route, only internal routes if needed                          
-
   tags = {
     Name = "private-database-route-table"
   }

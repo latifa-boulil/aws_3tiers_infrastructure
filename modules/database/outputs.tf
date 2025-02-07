@@ -8,3 +8,7 @@ output "rds_arn" {
     value = aws_db_instance.database.arn 
 }
 
+output "rds_id" {
+    description = "value"
+    value = aws_db_instance.database.id
+} # to verify is id or identifier is needed ? 

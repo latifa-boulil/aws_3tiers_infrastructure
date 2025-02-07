@@ -9,18 +9,6 @@ variable "db_name" {
     default = "app_database"
 }
 
-variable "db_username" {
-    description = "Database Access : Username"
-    type = string
-    sensitive = true    # prod.tfvars
-}
-
-variable "db_password" {
-    description = "Database Access : Password"
-    type = string
-    sensitive = true       # prod.tfvars 
-}
-
 variable "db_instance_class" {
     description = "Database Instance Type"
     type = string
@@ -39,16 +27,28 @@ variable "max_storage" {
     default = 50
 }
 
+variable "storage_type" {
+    description = "Storage Type - SSD"
+    type = string
+    default = "gp2"
+}
+
 variable "engine" {
     description = "Database Type - engine "
     type = string
     default = "mysql"
 }
 
-variable "storage_type" {
-    description = "Storage Type - SSD"
+variable "db_username" {
+    description = "Database Access: Username"
     type = string
-    default = "gp2"
+    sensitive = true    # prod.tfvars
+}
+
+variable "db_password" {
+    description = "Database Access : Password"
+    type = string
+    sensitive = true       # prod.tfvars 
 }
 
 variable "final_snapshot" {

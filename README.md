@@ -4,7 +4,8 @@
 ### Introduction
 ------------------
 
-This project showcases the deployment of a highly scalable and resilient 3-tier architecture on AWS, fully automated using Terraform. The infrastructure includes everything from VPC configuration to fine-grained security rules, ensuring optimal performance and security. It is designed to support modern web applications with high availability and efficient resource management, making it ideal for dynamic workloads.
+This project showcases the deployment of a highly scalable and resilient 3-tier architecture on AWS, fully automated using Terraform. 
+The infrastructure includes everything from VPC configuration to fine-grained security rules, ensuring optimal performance and security. It is designed to support modern web applications with high availability and efficient resource management, making it ideal for dynamic workloads.
 
 ### Project Overview
 ---------------------

@@ -11,7 +11,7 @@ variable "environment" {
 variable "instance_image" {
     description = "EC2 Image"
     type = string
-    default = "ami-00d81861317c2cc1f"
+    default = "ami-00d81861317c2cc1f" #use customize AMI
 }
 
 variable "instance_type" {
@@ -48,7 +48,12 @@ variable "associate_ip" {
     description = "rather or not we associate an public ip to our instances"
     type = bool
     default = true 
-  
+}
+
+variable "acm_certificate_arn" {
+    description = "certificate arn"
+    type = string
+    default = "arn:aws:acm:eu-west-3:061051253558:certificate/68fb4f6c-8591-43cd-98a5-bfc9c1c81f6b"
 }
 
 #########################################
@@ -77,17 +82,30 @@ variable "ssh_key" {
 }
 
 variable "web_sg" {
-    description = "List of Security Group Ids - FrontEnd"
+    description = "Security Group Ids - FrontEnd"
     type = string
   
 }
 
 variable "app_sg" {
-    description = "List of Security Group Ids - BackEnd"
+    description = "Security Group Ids - BackEnd"
     type = string
-  
 }
 
+variable "external_loadBalancer_sg" {
+    description = "Security Group Id for the external load balancer"
+    type = string
+}
+
+variable "internal_loadBalancer_sg" {
+    description = "Security Group Id for the internal Load Balancer"
+    type = string 
+}   
+
+variable "backend_instance_profile_name" {
+    description = "instance profile name to attach to backend"
+    type = string 
+}
 
 
 

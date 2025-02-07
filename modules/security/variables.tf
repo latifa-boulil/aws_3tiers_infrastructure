@@ -7,7 +7,6 @@ variable "vpc_id" {
     type = string
 }
 
-
 #########################################
 # MODULE VARIABLES
 #########################################
@@ -17,11 +16,16 @@ variable "trusted_ip" {
     type = string
 }
 
-variable "frontend_port" {
+variable "http_port" {
     description = "front end port"
     type = number
     default = 80
-  
+}
+
+variable "https_port" {
+    description = "https"
+    type = number
+    default = 442
 }
 
 variable "database_port" {
@@ -35,8 +39,6 @@ variable "backend_port" {
     type = number
     default = 3000
 }
-
-
 
 variable "ssh_key" {
     description = "ssh Public Key"

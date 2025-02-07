@@ -15,7 +15,6 @@ variable "ssh_key" {
     description = "SSH Public Key"
     type = string
     sensitive = true
-  
 }
 
 # variables's values available at prod.tfvars 
