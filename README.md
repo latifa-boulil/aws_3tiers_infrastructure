@@ -42,9 +42,6 @@ Terraform state is stored in a remote S3 backend, ensuring a secure and centrali
 The project is designed with cost efficiency in mind. Auto Scaling ensures that compute resources are only provisioned when necessary, scaling up during high traffic and scaling down during periods of low demand, minimizing costs. Additionally, most resources, such as the S3 backend, RDS, and EC2 instances, are configured to operate within the AWS Free Tier where possible, reducing operational expenses during the initial phases of development and testing.
 
 
-![diagram](assets/diagram.png)
-
-
 ### Project Structure
 --------------------------
 
@@ -90,7 +87,7 @@ This module includes the following key components:
 * **Security Group Rules**: Separate Implementation of Rules
 Security group rules are implemented as separate resources to avoid Terraform cycle errors. This approach ensures smooth dependency management while maintaining strict control over network traffic.
 
-![sg-group](assets/front-sg.png)
+![sg-group](assets/frontend-sg.png)
 
 * **Key Highlights**:
 - Principle of Least Privilege: Ensures minimal access between tiers, reducing the risk of unauthorized access.
@@ -285,6 +282,10 @@ This approach ensures that all security groups are created before any interdepen
 - [ ] Integrate AWS WAF with the Application Load Balancers (ALBs) to provide advanced security by protecting against common web exploits and attacks.
 - [ ] Incorporate Prometheus and Grafana for comprehensive monitoring and visualization, enabling proactive performance management and incident response.
 - [ ] Enhance IAM Role Implementation by applying the principle of least privilege more effectively, ensuring that resources only have access to the permissions necessary for their specific tasks.
+
+## Diagram
+
+![diagram](assets/diagram.png)
 
 ## License
 ------------------------
