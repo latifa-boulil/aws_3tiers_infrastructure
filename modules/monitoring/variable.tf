@@ -31,7 +31,6 @@ variable "back_scale_down_policy_arn" {
 variable "email" {
     description = "email"
     type = string 
-    default = "latifaboulil@hotmail.fr"
-  
+    sensitive = true
 }
 

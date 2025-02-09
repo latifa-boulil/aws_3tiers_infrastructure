@@ -6,7 +6,7 @@
 variable "db_name" {
     description = "Database Name"
     type = string
-    default = "app_database"
+    default = "app-database"
 }
 
 variable "db_instance_class" {
@@ -54,14 +54,13 @@ variable "db_password" {
 variable "final_snapshot" {
     description = "Rather or Not we Skip Last Data Backup Upon Deletion"
     type = bool
-    default = true # false by default 
-    # if true all data might be lost. Upon production set to false 
+    default = true # set to FALSE to production env.
 }
 
 variable "multi_az" {
     description = "Rather Or Not We Apply MultiAZ option"
     type = bool
-    default = false  # Free tier allow One AZ only - for High Availability and disaster recovery set to true
+    default = true #for high availability.  Cost involved
 }
 
 variable "access" {

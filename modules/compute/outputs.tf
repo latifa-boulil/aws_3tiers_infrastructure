@@ -28,3 +28,7 @@ output "front_scale_down_policy_arn" {
     value = aws_autoscaling_policy.front_scale_down.arn
 }
 
+output "loadbalancer_dns" {
+  description = "External Load Balancer DNS name"
+  value = aws_lb.public_alb.dns_name
+}

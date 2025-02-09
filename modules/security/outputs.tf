@@ -1,7 +1,7 @@
-output "ssh_key" {
-    description = "SSH KEY ID"
-    value = aws_key_pair.ssh-key.id
-}
+# output "ssh_key" {
+#     description = "SSH KEY ID"
+#     value = aws_key_pair.ssh-key.id
+# }
 
 output "web_sg" {
     description = "FrontEnd Security Group ID"

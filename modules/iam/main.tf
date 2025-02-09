@@ -94,13 +94,12 @@ resource "aws_iam_group_policy_attachment" "name" {
 }
 
 ##########################################
-# 
+# ADDITIONAL IAM POLICIES ?
 #########################################
-
 
 # iam role database ---> monitoring cloudwatch ??? 
 
-# iam role from frontend to s3 
+# iam role frontend ---> s3 ??
 
 # iam role alb ---> s3 logs ? 
 

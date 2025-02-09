@@ -3,15 +3,14 @@
 ##################################
 
 # Application Load Balancer
-
 resource "aws_lb" "public_alb" {
-  name               = "public-LB"
+  name               = "public-loadBalancer"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.external_loadBalancer_sg]
   subnets            = var.public_subnet_ids
 
-  enable_deletion_protection = false #set to true for production environement
+  enable_deletion_protection = var.delection_protection
   idle_timeout               = 60
 }
 
@@ -22,22 +21,17 @@ resource "aws_lb_listener" "public_listener" {
   protocol          = "HTTP"
   default_action {
     type = "redirect"
-
     redirect {
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
   }
-  # default_action {
-  #   type             = "forward"
-  #   target_group_arn = aws_lb_target_group.public_alb_targetgroup.arn
-  # }
-} # once configuration is checked and valid for certificate remove default forward for default redirect
+}
 
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.public_alb.arn
-  port              = 443
+  port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06" #"ELBSecurityPolicy-2016-08"
   certificate_arn   = var.acm_certificate_arn
@@ -50,7 +44,7 @@ resource "aws_lb_listener" "http_listener" {
 # Target Group (forward traffic to)
 resource "aws_lb_target_group" "public_alb_targetgroup" {
   name        = "public-target-group"
-  port        = 80
+  port        = "80"
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   health_check {
@@ -70,9 +64,8 @@ resource "aws_lb_target_group" "public_alb_targetgroup" {
 # Launch Template for Client(front) EC2
 resource "aws_launch_template" "public_launch_template" {
   name          = "web_launch_template"
-  image_id      = var.instance_image #use customize AMI 
+  image_id      = var.front_instance_image
   instance_type = var.instance_type
-  key_name      = var.ssh_key
   user_data = base64encode(file("${path.module}/ec2-init.sh")) 
 
   monitoring {
@@ -89,7 +82,7 @@ resource "aws_launch_template" "public_launch_template" {
       Name = "web_tier${var.environment}"
     }
   }
-  # add IAM ROLE to access S3 (code source )
+  # add IAM ROLE to access S3 (code source)
 }
 
 
@@ -98,26 +91,24 @@ resource "aws_launch_template" "public_launch_template" {
 #################################
 
 # AUTO SCALING GROUP - front end
-
 resource "aws_autoscaling_group" "web_tier_asg" {
   desired_capacity     = var.desired_capacity
   max_size             = var.max_size
   min_size             = var.min_size
-  vpc_zone_identifier  = var.public_subnet_ids  #list of public subnet from vpc/output.tf
+  vpc_zone_identifier  = var.public_subnet_ids 
 
   launch_template {
     id      = aws_launch_template.public_launch_template.id
     version = "$Latest"
   }
-
   # link to Public ALB
-  target_group_arns           = [aws_lb_target_group.public_alb_targetgroup.arn]# ALB Target Group
+  target_group_arns           = [aws_lb_target_group.public_alb_targetgroup.arn] 
   health_check_type           = "ELB"  # Health check is done via ALB
   health_check_grace_period   = 300
+  termination_policies        = ["OldestInstance"]
 }
 
 # AUTO SCALING POLICY
-
 resource "aws_autoscaling_policy" "front_scale_up" {
   name = "front_scale_out"
   scaling_adjustment = 1  # add one instance
@@ -139,7 +130,7 @@ resource "aws_autoscaling_policy" "front_scale_down" {
 # APPLICATION LOAD BALANCER BACKEND 
 #####################################
 
-# Application Load Balancer
+#Application Load Balancer
 resource "aws_lb" "private_alb" {
   name               = "private-LB"
   internal           = true
@@ -151,8 +142,8 @@ resource "aws_lb" "private_alb" {
   idle_timeout               = 60
 }
 
-# Listener (receive traffic from)
-resource "aws_lb_listener" "http_listener" {
+# # Listener (receive traffic from)
+resource "aws_lb_listener" "frontend_listener" {
   load_balancer_arn = aws_lb.private_alb.arn
   port              = 80
   protocol          = "HTTP"
@@ -179,13 +170,13 @@ resource "aws_lb_target_group" "private_alb_targetgroup" {
   }
 }
 
-#################################
-# EC2 LAUNCH TEMPLATE BACK END 
-#################################
+# #################################
+# # EC2 LAUNCH TEMPLATE BACK END 
+# #################################
 
 resource "aws_launch_template" "private_launch_template" {
   name          = "app_launch_template"
-  image_id      = var.instance_image # custom private AMI
+  image_id      = var.back_instance_image
   instance_type = var.instance_type
 
   monitoring {
@@ -208,9 +199,9 @@ resource "aws_launch_template" "private_launch_template" {
   }
 }
 
-#################################
-# AUTO SCALING GROUP BACK END 
-#################################
+# #################################
+# # AUTO SCALING GROUP BACK END 
+# #################################
 
 resource "aws_autoscaling_group" "app_tier_asg" {
   desired_capacity     = var.desired_capacity
@@ -222,19 +213,13 @@ resource "aws_autoscaling_group" "app_tier_asg" {
     id      = aws_launch_template.private_launch_template.id
     version = "$Latest"
   }
-
-  health_check_type          = "ELB" # default is EC2
+  # Link to private Load Balancer
+  health_check_type          = "ELB" 
   target_group_arns = [aws_lb_target_group.private_alb_targetgroup.arn]
   health_check_grace_period  = 300
-
-  tag {
-    key                 = "Name"
-    value               = "app_tier${var.environment}"
-    propagate_at_launch = true
-  }
 }
 
-# auto scaling policy
+# # auto scaling policy
 resource "aws_autoscaling_policy" "back_scale_up" {
   name = "back_scale_out"
   scaling_adjustment = 1

@@ -8,34 +8,47 @@ variable "environment" {
     default = "production"
 }
 
-variable "instance_image" {
-    description = "EC2 Image"
-    type = string
-    default = "ami-00d81861317c2cc1f" #use customize AMI
+variable "delection_protection" {
+    description = "rather or not delection protection is enabled"
+    type = bool
+    default = false # set to true for production environement
+  
 }
 
 variable "instance_type" {
     description = "EC2 Instance type"
     type = string
-    default = "t2.micro"
+    default = "t2.micro" #adapt to our app requirements
+}
+
+variable "front_instance_image" {
+    description = "AMI id for the front layer app"
+    type = string
+    default = "ami-0359cb6c0c97c6607" #set to the custom frontend AMI id
+}
+
+variable "back_instance_image" {
+    description = "AMI id for our back layer app"
+    type = string 
+    default = "ami-0359cb6c0c97c6607" # set to the custom backend AMI id
 }
 
 variable "desired_capacity" {
     description = "Desired number of EC2 - Auto Scaling Group"
     type = number
-    default = 2
+    default = 1 #adapt to your workload
 }
 
 variable "min_size" {
     description = " minimum EC2 running - Auto Scaling Group"
     type = number
-    default = 1
+    default = 1 #adapt to your workload
 }
 
 variable "max_size" {
     description = "maximum EC2 running - Auto Scaling Group"
     type = number
-    default = 4
+    default = 2 #adampt to your workload
 }
 
 variable "monitoring" {
@@ -47,13 +60,14 @@ variable "monitoring" {
 variable "associate_ip" {
     description = "rather or not we associate an public ip to our instances"
     type = bool
-    default = true 
+    default = true #set to false for private launch template
 }
 
+# to add to prod.tfvars 
 variable "acm_certificate_arn" {
     description = "certificate arn"
     type = string
-    default = "arn:aws:acm:eu-west-3:061051253558:certificate/68fb4f6c-8591-43cd-98a5-bfc9c1c81f6b"
+    sensitive = true
 }
 
 #########################################
@@ -76,15 +90,9 @@ variable "private_subnet_ids" {
   
 }
 
-variable "ssh_key" {
-    description = "SSH Public Key of EC2 Connection"
-    type = string
-}
-
 variable "web_sg" {
     description = "Security Group Ids - FrontEnd"
     type = string
-  
 }
 
 variable "app_sg" {
@@ -106,6 +114,4 @@ variable "backend_instance_profile_name" {
     description = "instance profile name to attach to backend"
     type = string 
 }
-
-
 

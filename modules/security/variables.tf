@@ -11,9 +11,10 @@ variable "vpc_id" {
 # MODULE VARIABLES
 #########################################
 
-variable "trusted_ip" {
-    description = "personal Ip Adress range to access Public EC2 via SSH protocol"
-    type = string
+variable "ssh_port" {
+    description = "ssh port"
+    type = number
+    default = 22
 }
 
 variable "http_port" {
@@ -40,8 +41,8 @@ variable "backend_port" {
     default = 3000
 }
 
-variable "ssh_key" {
-    description = "ssh Public Key"
-    type = string
-    sensitive = true 
+variable "trusted_ip" {
+    description = "value"
+    type = list(string)
+    sensitive = true
 }

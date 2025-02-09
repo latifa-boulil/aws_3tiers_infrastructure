@@ -10,14 +10,15 @@ module "compute" {
   source = "./modules/compute"
   vpc_id = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
-  ssh_key = module.security.ssh_key
   web_sg = module.security.web_sg
   app_sg = module.security.app_sg
   private_subnet_ids = module.vpc.private_subnet_ids
   external_loadBalancer_sg = module.security.external_loadBalancer_sg
   internal_loadBalancer_sg = module.security.internal_loadBalancer_sg
   backend_instance_profile_name = module.iam.backend_instance_profile_name
+  acm_certificate_arn = var.acm_certificate
 }
+
 
 module "database" {
   source = "./modules/database"
@@ -26,14 +27,13 @@ module "database" {
   db_username = var.db_username
   database_subnets = module.vpc.database_subnet_ids
   database_sg = module.security.database_sg
-
 }
 
 module "security" {
   source = "./modules/security"
   vpc_id = module.vpc.vpc_id
-  trusted_ip = "172.18.0.0/16"
-  ssh_key = var.ssh_key
+  trusted_ip = var.trusted_ip
+  #ssh_key = var.ssh_key
 }
 
 module "iam" {
@@ -48,4 +48,5 @@ module "monitoring" {
   front_scale_up_policy_arn = module.compute.front_scale_up_policy_arn
   back_scale_down_policy_arn = module.compute.back_scale_down_policy_arn
   front_scale_down_policy_arn = module.compute.front_scale_down_policy_arn
+  email = var.email
 }

@@ -12,7 +12,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_up" {
   namespace = "AWS/EC2"
   period = "300"
   statistic = "Average"
-  threshold = "30" # +1 instance once cpu is > or = 30
+  threshold = "70" # +1 instance once cpu is > or = 70
   dimensions = {
     AutoScalingGroupName = var.front_auto_scaling_name
   }
@@ -28,7 +28,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_down" {
   namespace = "AWS/EC2"
   period = "120"
   statistic = "Average"
-  threshold = "27" # -1 instance once cpu = or < at 27
+  threshold = "40" # -1 instance once cpu = or < at 40
   dimensions = {
     "AutoScalingGroupName" = var.front_auto_scaling_name
   }

@@ -1,15 +1,6 @@
 # Security Group Rule are to be separate from Security Group to avoid cycle errors
 
 ####################################
-# SSH KEY
-###################################3
-
-resource "aws_key_pair" "ssh-key" {  
-    key_name = "ssh_key"
-    public_key = var.ssh_key
-}
-
-####################################
 # FRONT END LAYER 
 ####################################
 
@@ -31,7 +22,7 @@ resource "aws_security_group" "external_loadBalancer_sg" {
     description = "allow all traffic out"
     from_port = 0
     to_port = 0
-    protocol = "tcp"
+    protocol = "-1" #allow all traffic out
     cidr_blocks = [ "0.0.0.0/0" ]
   }
   tags = {
@@ -49,7 +40,7 @@ resource "aws_security_group" "web_sg" {
     description = "allow all traffic out"
     from_port = 0
     to_port = 0
-    protocol = "tcp"
+    protocol = "-1"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
   tags = {
@@ -57,7 +48,18 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-# receive http traffic from ALB security group
+#receive ssh traffic from trusted IP
+resource "aws_security_group_rule" "front_ingress_ssh" {
+  type = "ingress"
+  description = "Allow ssh connection "
+  from_port = var.ssh_port
+  to_port = var.ssh_port
+  protocol = "tcp"
+  cidr_blocks = var.trusted_ip
+  security_group_id = aws_security_group.web_sg.id
+}
+
+# receive http traffic from ALB security group t
 resource "aws_security_group_rule" "front_ingress_http" {
   type = "ingress"
   description = "Allow http connection "
@@ -68,13 +70,14 @@ resource "aws_security_group_rule" "front_ingress_http" {
   security_group_id = aws_security_group.web_sg.id
 }
 
+# send traffic to Internal Load Balancer
 resource "aws_security_group_rule" "front_ingress_backend" {
   type = "ingress"
   description = "Allow backend connection "
-  from_port = var.backend_port
-  to_port = var.backend_port
+  from_port = var.http_port
+  to_port = var.http_port
   protocol = "tcp"
-  source_security_group_id = aws_security_group.app_sg.id # TO CHANGE TO INTERNET LOAD BALANCER SG 
+  source_security_group_id = aws_security_group.internal_loadBalancer_sg.id
   security_group_id = aws_security_group.web_sg.id # attach to front end 
 }
 
@@ -93,44 +96,37 @@ resource "aws_security_group" "internal_loadBalancer_sg" {
     from_port = var.http_port
     to_port = var.http_port
     protocol = "tcp"
-    cidr_blocks = [ "0.0.0.0/0" ]  # to change to front security group 
+    cidr_blocks = [ "0.0.0.0/0" ]  # to change to front end security group
   }
 
   egress {
     description = "allow all traffic out"
     from_port = 0
     to_port = 0
-    protocol = "tcp"
+    protocol = "-1"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
-  tags = {
-    Name = "internal_loadBalancerSg"
-  }
 }
-
 
 # Back end Security Group
 resource "aws_security_group" "app_sg" {
   name = "backend-sg"
   description = "Back end Security Group"
   vpc_id = var.vpc_id
-
-  tags = {
-    Name = "back_security_group"
-  }
 }
 
-# Back End Rules
+# Receive traffic from internal Load Balancer
 resource "aws_security_group_rule" "back_ingress_front" {
   type = "ingress"
   description = "allow traffic from frontend only"
   from_port = var.http_port
   to_port = var.http_port
   protocol = "tcp"
-  source_security_group_id = aws_security_group.internal_loadBalancer_sg.id # from Internal Load Balancer SG
+  source_security_group_id = aws_security_group.internal_loadBalancer_sg.id 
   security_group_id = aws_security_group.app_sg.id
 }
 
+# receive traffic from database Security Group
 resource "aws_security_group_rule" "back_ingress_db" {
   type = "ingress"
   description = "allow traffic from database"
@@ -170,10 +166,6 @@ resource "aws_security_group" "database_sg" {
   name        = "database-sg"
   description = "Database Security Group"
   vpc_id      = var.vpc_id
-
-  tags = {
-    Name = "databse-sg"
-  }
 }
 
 # Database Rules

@@ -4,5 +4,9 @@ db_password = "your secure database username here"
 
 ssh_key = "your secure ssh public key here"
 
+trusted_ip = "ssh connection from IP range"
+
 acm_certificate = "your secure acm certificate arn"
+
+email = "sns email subnscription here"
 
